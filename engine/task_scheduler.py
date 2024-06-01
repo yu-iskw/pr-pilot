@@ -40,9 +40,12 @@ class TaskScheduler:
         self.context.acknowledge_user_prompt()
         if self.user_budget_empty():
             logger.info(f"User {self.task.github_user} has no budget")
-            self.context.respond_to_user(
-                "You have used up your budget. Please visit the [Dashboard](https://app.pr-pilot.ai) to purchase more credits."
+            message = (
+                "You have used up your budget. Please visit the "
+                "[Dashboard](https://app.pr-pilot.ai) to purchase more credits."
             )
+            self.context.respond_to_user(message)
+            self.task.result = message
             self.task.status = "failed"
             self.task.save()
             return
@@ -54,6 +57,7 @@ class TaskScheduler:
             )
             self.context.respond_to_user(message)
             self.task.status = "failed"
+            self.task.result = message
             self.task.save()
             return
 
@@ -65,6 +69,7 @@ class TaskScheduler:
             )
             self.context.respond_to_user(message)
             self.task.status = "failed"
+            self.task.result = message
             self.task.save()
             return
         if settings.JOB_STRATEGY == "thread":

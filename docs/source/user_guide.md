@@ -28,28 +28,43 @@ You can use PR Pilot in different ways:
 Our [CLI](https://github.com/PR-Pilot-AI/pr-pilot-cli) puts PR Pilot right at your fingertips:
 
 ```bash
-pip install pr-pilot-cli
-pilot -o README_German.md "translate the README into German"
+pip install --upgrade pr-pilot-cli
 ```
 
-By using [prompt templates](https://github.com/PR-Pilot-AI/pr-pilot-cli/tree/main/prompts), you can create powerful, 
-reusable commands:
+Open a terminal and `ls` into a repository you have installed PR Pilot, then:
 
-```markdown
-Our unit tests on {{ env('ENVIRONMENT' }} are failing:
-
----
-{{ sh('pytest') }}  
----
-
-Analyze the results, read relevant code files and drop a helpful comment on PR #{{ env('PR_NUMBER' }}.
-```
-
-You could run this as part of your CI/CD pipeline:
+**📝 Ask PR Pilot to edit a local file for you:**
 
 ```bash
-pilot --quiet -f analyze_test_results.md.jinja2
+pilot --edit cli/cli.py "Make sure all functions and classes have docstrings."
 ```
+
+**⚡ Generate code quickly and save it as a file:**
+
+```bash
+pilot -o test_utils.py --code "Write some unit tests for the utils.py file."
+```
+
+**🔍 Capture part of your screen and add it to a prompt:**
+
+```bash
+pilot -o component.html --code --snap "Write a Bootstrap5 component that looks like this."
+```
+
+**📊 Get an organized view of your Github issues:**
+
+```bash
+pilot "Find all open Github issues labeled as 'bug', categorize and prioritize them"
+```
+
+**📝 Generate parts of your documentation with a template:**
+
+```bash
+pilot --direct -f prompts/README.md.jinja2 -o README.md
+```
+
+For more examples, check out [template prompts](https://github.com/PR-Pilot-AI/pr-pilot-cli/tree/main/prompts).
+
 
 ### Python SDK
 

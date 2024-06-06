@@ -137,7 +137,11 @@ class TaskEngine:
                 )
                 self.project.checkout_branch(self.task.head)
                 working_branch = self.task.head
+            elif self.task.branch:
+                # If task is a standalone task, checkout the branch
+                working_branch = self.task.branch
             else:
+                # No branch or PR number provided, create a new branch
                 working_branch = self.setup_working_branch(self.task.title)
             # Make sure we never work directly on the main branch
             if self.project.active_branch == self.project.main_branch:
@@ -186,6 +190,8 @@ class TaskEngine:
                     f"\n\n**PR**: [{pr.title}]({pr.html_url})\n\nIf you require further changes, "
                     f"continue our conversation over there!"
                 )
+                self.task.pr_number = pr.number
+                self.task.branch = working_branch
             final_response += f"\n\n---\n📋 **[Log](https://app.pr-pilot.ai/dashboard/tasks/{str(self.task.id)}/)**"
             final_response += f" ↩️ **[Undo](https://app.pr-pilot.ai/dashboard/tasks/{str(self.task.id)}/undo/)**"
         except Exception as e:

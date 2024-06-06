@@ -82,7 +82,7 @@ class TaskEngine:
             self.project.commit_all_changes(message="Uncommitted changes")
         if self.project.get_diff_to_main():
             logger.info(
-                f"Found changes on {branch_name!r} branch. Pushing and creating PR..."
+                f"Found changes on {branch_name!r} branch. Pushing changes ..."
             )
             self.project.push_branch(branch_name)
             TaskEvent.add(actor="assistant", action="push_branch", target=branch_name)
@@ -176,23 +176,24 @@ class TaskEngine:
                     )
                     self.project.push_branch(working_branch)
             elif working_branch and self.finalize_working_branch(working_branch):
-                # We are working on a new branch and have changes to push
-                logger.info(f"Creating pull request for branch {working_branch}")
-                pr_info = generate_pr_info(final_response)
-                if not pr_info:
-                    pr_info = LabelsAndTitle(title=self.task.title, labels=["pr-pilot"])
-                pr: PullRequest = Project.from_github().create_pull_request(
-                    title=pr_info.title,
-                    body=final_response,
-                    head=working_branch,
-                    labels=pr_info.labels,
-                )
-                final_response += (
-                    f"\n\n**PR**: [{pr.title}]({pr.html_url})\n\nIf you require further changes, "
-                    f"continue our conversation over there!"
-                )
-                self.task.pr_number = pr.number
-                self.task.branch = working_branch
+                # Do not create a PR if user asked us to work on their branch
+                if not self.task.branch:
+                    logger.info(f"Creating pull request for branch {working_branch}")
+                    pr_info = generate_pr_info(final_response)
+                    if not pr_info:
+                        pr_info = LabelsAndTitle(title=self.task.title, labels=["pr-pilot"])
+                    pr: PullRequest = Project.from_github().create_pull_request(
+                        title=pr_info.title,
+                        body=final_response,
+                        head=working_branch,
+                        labels=pr_info.labels,
+                    )
+                    final_response += (
+                        f"\n\n**PR**: [{pr.title}]({pr.html_url})\n\nIf you require further changes, "
+                        f"continue our conversation over there!"
+                    )
+                    self.task.pr_number = pr.number
+                    self.task.branch = working_branch
             final_response += f"\n\n---\n📋 **[Log](https://app.pr-pilot.ai/dashboard/tasks/{str(self.task.id)}/)**"
             final_response += f" ↩️ **[Undo](https://app.pr-pilot.ai/dashboard/tasks/{str(self.task.id)}/undo/)**"
         except Exception as e:

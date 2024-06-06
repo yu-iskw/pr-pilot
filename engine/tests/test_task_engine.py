@@ -125,7 +125,13 @@ def test_pr_number_set(task, engine):
 
 
 @pytest.mark.django_db
-def test_checks_out_custom_branch(task, engine):
+def test_handles_custom_branch_correctly(task, engine, mock_project_class):
+    # Simulate local changes in the repository
+    engine.finalize_working_branch.return_value = True
     task.branch = "test-branch"
     engine.run()
+    # Make sure the engine checks out the correct branch
     engine.project.checkout_branch.assert_called_once_with("test-branch")
+    # Make sure it only pushes the changes, but does not create a PR
+    engine.finalize_working_branch.assert_called_once()
+    mock_project_class.from_github.create_pull_request.assert_not_called()

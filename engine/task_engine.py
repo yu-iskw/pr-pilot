@@ -140,6 +140,7 @@ class TaskEngine:
             elif self.task.branch:
                 # If task is a standalone task, checkout the branch
                 working_branch = self.task.branch
+                self.project.checkout_branch(self.task.branch)
             else:
                 # No branch or PR number provided, create a new branch
                 working_branch = self.setup_working_branch(self.task.title)

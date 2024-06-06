@@ -122,3 +122,10 @@ def test_pr_number_set(task, engine):
     assert task.status == "completed"
     assert task.pr_number == 69
     assert task.branch == "test-branch"
+
+
+@pytest.mark.django_db
+def test_checks_out_custom_branch(task, engine):
+    task.branch = "test-branch"
+    engine.run()
+    engine.project.checkout_branch.assert_called_once_with("test-branch")

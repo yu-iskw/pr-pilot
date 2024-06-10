@@ -2,8 +2,22 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
+class LinearIntegration(models.Model):
+    api_key = models.TextField(null=True, blank=False)
+
+
+class SlackIntegration(models.Model):
+    bot_token = models.TextField(null=True, blank=False)
+    user_token = models.TextField(null=True, blank=False)
+
+
 class PilotUser(AbstractUser):
-    pass
+    linear_integration = models.OneToOneField(
+        LinearIntegration, on_delete=models.CASCADE, null=True, blank=True
+    )
+    slack_integration = models.OneToOneField(
+        SlackIntegration, on_delete=models.CASCADE, null=True, blank=True
+    )
 
 
 class UserBudget(models.Model):

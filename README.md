@@ -12,16 +12,11 @@
 
 # PR Pilot
 
-An AI agent for your Github project.
+Save time and stay in the flow by delegating routine work to AI with confidence and predictability. PR Pilot assist you in your daily workflow and works with the dev tools you trust and love - exactly when and where you want it.
 
-The agent can search and manipulate the code base, browse the internet and interact with Github issues and pull requests. Developers can hand off manual, repetitive parts of their daily work to PR Pilot using Github Actions or integrate it into their own tools using the API and SDK.
-
+[![asciicast](https://asciinema.org/a/664029.svg)](https://asciinema.org/a/664029)
 
 Get started now with our [User Guide](https://docs.pr-pilot.ai/user_guide.html).
-
-<img src="docs/source/img/overview.png" alt="PR Pilot" height="350">
-
-
 
 
 ### Hand of work to PR Pilot from anywhere
@@ -31,26 +26,32 @@ You can interact with PR Pilot in a variety of ways:
 #### Using the **[Command-Line Interface](https://github.com/PR-Pilot-AI/pr-pilot-cli)**
 
 ```bash
-pilot --model=gpt-4o -o README_German.md "translate the README into German"
+pilot edit main.py "Add docstrings to all functions and classes"
 ```
 
 With [prompt templates](https://github.com/PR-Pilot-AI/pr-pilot-cli/tree/main/prompts), you can create powerful,
 reusable commands:
 
 ```markdown
-Our unit tests on {{ env('ENVIRONMENT' }} are failing:
+I've made some changes and opened a new PR: #{{ env('PR_NUMBER') }}.
 
----
-{{ sh('pytest') }}  
----
+I need a PR title and a description that summarizes these changes in short, concise bullet points.
+The PR description will also be used as merge commit message, so it should be clear and informative.
 
-Analyze the results, read relevant code files and drop a helpful comment on PR #{{ env('PR_NUMBER' }}.
+Use the following guidelines:
+
+- Start title with a verb in the imperative mood (e.g., "Add", "Fix", "Update").
+- At the very top, provide 1-sentence summary of the changes and their impact.
+- Below, list the changes made in bullet points.
+
+# Your task
+Edit PR #{{ env('PR_NUMBER') }} title and description to reflect the changes made in this PR.
 ```
 
-The CLI will dynamically render the prompt and execute the steps autonomously:
+Send PR Pilot off to give any PR a title and description according to your guidelines:
 
 ```bash
-pilot -f analyze_test_results.md.jinja2
+PR_NUMBER=153 pilot task -f generate-pr-description.md.jinja2
 ```
 
 #### Using the **[Python SDK](https://github.com/PR-Pilot-AI/pr-pilot-python)**:

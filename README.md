@@ -59,9 +59,16 @@ PR_NUMBER=153 pilot task -f generate-pr-description.md.jinja2
 ```python
 from pr_pilot.util import create_task, wait_for_result
 
+prompt = """
+1. Find all 'bug' issues created yesterday on Slack and Linear.
+2. Summarize and post them to #bugs-daily on Slack
+3. Save the summary in `reports/<date>.md`
+"""
+
 github_repo = "PR-Pilot-AI/pr-pilot"
-task = create_task(github_repo, "Summarize the README file and create a Github issue with the result.")
+task = create_task(github_repo, prompt)
 result = wait_for_result(task)
+
 print(result)
 ```
 

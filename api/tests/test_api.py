@@ -207,3 +207,13 @@ def test_list_tasks(api_key, github_repo):
     # Check the response
     assert response.status_code == 200
     assert len(response.data) == TASK_LIST_LIMIT
+
+
+def test_swagger_ui():
+    response = client.get("/api/swagger-ui/")
+    assert response.status_code == 200
+
+
+def test_redoc_ui():
+    response = client.get("/api/redoc/")
+    assert response.status_code == 200

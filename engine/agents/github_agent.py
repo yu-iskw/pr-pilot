@@ -131,6 +131,7 @@ def read_pull_request(pr_number: int):
     labels = ",".join([label.name for label in pr.labels])
 
     markdown_output = f"# [{pr.number}] {pr.title}\n"
+    markdown_output += f"Branch: {pr.head.ref}\n"
     markdown_output += f"Labels: {labels}\n\n"
     markdown_output += f"## PR Body\n{pr.body}\n\n"
 

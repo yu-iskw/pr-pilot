@@ -1,3 +1,6 @@
+import json
+import logging
+
 import requests
 from langchain.agents import Tool
 from langchain_core.tools import StructuredTool
@@ -6,6 +9,8 @@ from pydantic.v1 import BaseModel, Field
 from engine.models.task_event import TaskEvent
 
 LINEAR_API_URL = "https://api.linear.app/graphql"
+
+logger = logging.getLogger(__name__)
 
 
 def run_graphql_query(api_key: str, query: str):
@@ -51,9 +56,21 @@ def list_linear_tools(api_key: str):
         TaskEvent.add(
             actor="assistant",
             action="search_linear_workspace",
-            message=f"Performed a Linear search with query: \n\n```\n{query}\n```",
+            message=f"Searching Linear search with query: \n\n```\n{query}\n```",
         )
-        return run_graphql_query(api_key, query)
+        response = run_graphql_query(api_key, query)
+        if "errors" in response:
+            message = (
+                f"Error searching Linear workspace: {response['errors'][0]['message']}"
+            )
+            logger.error(message)
+            logger.error(response)
+            TaskEvent.add(
+                actor="assistant",
+                action="error",
+                message=message,
+            )
+        return json.dumps(response, indent=2)
 
     def create_linear_issue_tool(title: str, description: str, team_name: str):
 

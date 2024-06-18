@@ -9,8 +9,9 @@
   <a href="https://www.pr-pilot.ai">Website</a>
 </p>
 
-
 # PR Pilot
+
+[![Unit Tests](https://github.com/PR-Pilot-AI/pr-pilot/actions/workflows/unit_tests.yml/badge.svg?branch=main)](https://github.com/PR-Pilot-AI/pr-pilot/actions/workflows/unit_tests.yml)
 
 Save time and stay in the flow by delegating routine work to AI with confidence and predictability. PR Pilot assist you in your daily workflow and works with the dev tools you trust and love - exactly when and where you want it.
 

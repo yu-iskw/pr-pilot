@@ -9,10 +9,10 @@ commands:
     file: prompts/create_api_endpoint.md.jinja2
     model: gpt-4o
     output: reports/bugs.md
-    verbose: true
     snap: false
     spinner: true
     sync: true
+    verbose: true
     wait: true
 - description: Organize and clean up config files (package.json, pom.xml, etc)
   name: house-keeping
@@ -23,8 +23,22 @@ commands:
     direct: false
     file: prompts/house-keeping.md.jinja2
     model: gpt-4o
-    verbose: false
     snap: false
     spinner: true
     sync: true
+    verbose: false
+    wait: true
+- description: Generate PR Title & Description
+  name: pr-description
+  params:
+    cheap: false
+    code: false
+    debug: false
+    direct: false
+    file: prompts/generate-pr-description.md.jinja2
+    model: gpt-4o
+    snap: false
+    spinner: false
+    sync: false
+    verbose: false
     wait: true

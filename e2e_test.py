@@ -70,7 +70,7 @@ Respond with a link to the Slack message.
 
 def run_e2e_test():
     task = create_task(
-        "Find events for the issue 5330206259 on Sentry for project `python-django` and give me an analysis",
+        "Find all unresolved Sentry issues that were seen in the last 24h in project `python-django`",
         model="gpt-4o",
     )
     settings.TASK_ID = str(task.id)

@@ -57,7 +57,7 @@ def test_get_sentry_events(mock_sentry_api):
         }
     ]
 
-    result = get_sentry_events("12345", "fake_api_key", "fake_org")
+    result = get_sentry_events("12345", False, "fake_api_key", "fake_org")
     assert "Found 1 events for issue ID" in result
     assert "Test event message" in result
     assert "engine/agents/tests/test_sentry_tools.py" in result

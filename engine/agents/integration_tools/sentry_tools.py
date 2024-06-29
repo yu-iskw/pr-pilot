@@ -20,14 +20,16 @@ class SentryAPI:
         }
 
     def search_issues(self, query: str, project: str) -> dict:
-        url = f"{self.base_url}/projects/{self.org}/{project}/issues/?query={query}"
-        response = requests.get(url, headers=self.headers)
+        url = f"{self.base_url}/projects/{self.org}/{project}/issues/"
+        response = requests.get(url, headers=self.headers, params={"query": query})
         response.raise_for_status()
         return response.json()
 
-    def get_events(self, issue_id: str) -> dict:
+    def get_events(self, issue_id: str, include_stacktrace: bool) -> dict:
         url = f"{self.base_url}/organizations/{self.org}/issues/{issue_id}/events/"
-        response = requests.get(url, headers=self.headers)
+        response = requests.get(
+            url, headers=self.headers, params={"full": include_stacktrace}
+        )
         response.raise_for_status()
         return response.json()
 
@@ -62,10 +64,12 @@ def search_sentry_issues(query: str, api_key: str, org: str, project_slug: str) 
         return msg
 
 
-def get_sentry_events(issue_id: str, api_key: str, org: str) -> str:
+def get_sentry_events(
+    issue_id: str, include_stacktrace: bool, api_key: str, org: str
+) -> str:
     sentry = SentryAPI(api_key, org)
     try:
-        events = sentry.get_events(issue_id)
+        events = sentry.get_events(issue_id, include_stacktrace)
         TaskEvent.add(
             actor="assistant",
             action="get_sentry_events",
@@ -105,10 +109,16 @@ class SearchSentryIssuesInput(BaseModel):
 
 class GetSentryEventsInput(BaseModel):
     issue_id: str = Field(..., title="ID of the Sentry issue to get events for")
+    include_stacktrace: bool = Field(
+        default=False, title="Include stacktrace in events"
+    )
 
 
 SEARCH_TOOL_DESCRIPTION = """
 Search Sentry issues based on a query.
+Notes on filters:
+- `>/</=2023-01-01T00:00:00` for date filters
+- `-24h`, `-1d`, etc for relative date filters
 """
 
 
@@ -129,7 +139,9 @@ def list_sentry_tools(api_key: str, org: str) -> list:
 
     get_events_tool = StructuredTool(
         name="get_sentry_events",
-        func=lambda issue_id: get_sentry_events(issue_id, api_key, org),
+        func=lambda issue_id, include_stacktrace: get_sentry_events(
+            issue_id, include_stacktrace, api_key, org
+        ),
         description=GET_EVENTS_TOOL_DESCRIPTION,
         args_schema=GetSentryEventsInput,
     )

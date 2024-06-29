@@ -49,7 +49,10 @@ chain = prompt | model | parser
 def generate_task_title(issue_description: str, user_request: str) -> str:
     return (
         chain.invoke(
-            {"issue_description": issue_description, "user_request": user_request[:INPUT_CUTOFF]}
+            {
+                "issue_description": issue_description,
+                "user_request": user_request[:INPUT_CUTOFF],
+            }
         )
         .replace("\n", "")
         .lstrip('"')

@@ -52,7 +52,7 @@ def scrape_website(url: str):
     docs = loader.load()
     html2text = Html2TextTransformer()
     docs_transformed = html2text.transform_documents(docs)
-    
+
     if docs_transformed and docs_transformed[0].page_content:
         return docs_transformed[0].page_content[0:700]
     else:

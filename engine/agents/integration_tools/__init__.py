@@ -4,6 +4,7 @@ from accounts.models import PilotUser
 from engine.cryptography import decrypt
 from .linear_tools import list_linear_tools
 from .slack_tools import list_slack_tools
+from .sentry_tools import list_sentry_tools
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +19,12 @@ def integration_tools_for_user(user: PilotUser):
         tools = tools + list_slack_tools(
             decrypt(user.slack_integration.bot_token),
             decrypt(user.slack_integration.user_token),
+        )
+    if user.sentry_integration and user.sentry_integration.api_key:
+        logger.info(f"User {user.username} has a Sentry integration.")
+        tools = tools + list_sentry_tools(
+            decrypt(user.sentry_integration.api_key),
+            user.sentry_integration.org_id_or_slug,
         )
     if not tools:
         logger.info(f"User {user.username} has no integrations.")

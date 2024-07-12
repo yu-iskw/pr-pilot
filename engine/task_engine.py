@@ -64,7 +64,8 @@ class TaskEngine:
 
         counter = 1
         original_branch_name = unique_branch_name
-        while unique_branch_name in repo.branches:
+
+        while unique_branch_name in [str(ref).replace('origin/', '') for ref in repo.refs]:
             unique_branch_name = f"{original_branch_name}-{counter}"
             counter += 1
         return unique_branch_name

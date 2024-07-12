@@ -142,8 +142,8 @@ def test_handles_custom_branch_correctly(task, engine, mock_project_class):
     "existing_branches, expected_branch_name",
     [
         ([], "test-basis"),
-        (["test-basis"], "test-basis-1"),
-        (["test-basis", "test-basis-1"], "test-basis-2"),
+        (["origin/test-basis"], "test-basis-1"),
+        (["test-basis", "origin/test-basis-1"], "test-basis-2"),
     ],
 )
 def test_create_unique_branch_name__existing_branch(
@@ -151,7 +151,7 @@ def test_create_unique_branch_name__existing_branch(
 ):
     with patch("engine.task_engine.Repo") as MockRepo:
         mock_repo = MockRepo.return_value
-        mock_repo.branches = existing_branches
+        mock_repo.refs = existing_branches
 
         engine = TaskEngine(task)
         branch_name = engine.create_unique_branch_name("test-basis")
